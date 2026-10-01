@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SAVi.Api/SAVi.Api.csproj" />
+    <Project Path="src/SAVi.Application/SAVi.Application.csproj" />
+    <Project Path="src/SAVi.Domain/SAVi.Domain.csproj" />
+    <Project Path="src/SAVi.Infrastructure/SAVi.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SAVi.Api.IntegrationTests/SAVi.Api.IntegrationTests.csproj" />
+    <Project Path="tests/SAVi.Application.Tests/SAVi.Application.Tests.csproj" />
+    <Project Path="tests/SAVi.Domain.Tests/SAVi.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

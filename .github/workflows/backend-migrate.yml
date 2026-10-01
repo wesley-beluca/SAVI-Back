@@ -1,0 +1,24 @@
+name: Backend - Aplicar migrations (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - run: dotnet tool restore
+
+      - name: Aplicar migrations no banco de produção (Neon)
+        run: >
+          dotnet tool run dotnet-ef database update
+          --project src/SAVi.Infrastructure
+          --startup-project src/SAVi.Api
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.PROD_DATABASE_URL }}
