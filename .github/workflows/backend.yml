@@ -37,9 +37,9 @@ jobs:
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          # Alternativa mais segura: configurar Workload Identity Federation e trocar
-          # "credentials_json" por "workload_identity_provider" + "service_account".
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          # Workload Identity Federation: o GitHub se autentica via OIDC, sem chave JSON.
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - uses: google-github-actions/setup-gcloud@v2
 

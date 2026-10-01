@@ -124,7 +124,7 @@ Os testes de integração usam configurações fixas de teste e não precisam de
 
 No GitHub (`Settings → Secrets and variables → Actions`):
 
-- **Secrets:** `GCP_SA_KEY`, `GCP_PROJECT_ID`, `GCP_REGION`, `PROD_DATABASE_URL`
+- **Secrets:** `GCP_WORKLOAD_IDENTITY_PROVIDER`, `GCP_SERVICE_ACCOUNT`, `GCP_PROJECT_ID`, `GCP_REGION`, `PROD_DATABASE_URL`
 - **Variables:** `FRONTEND_URL` (URL do Cloudflare Pages, usada no CORS)
 
 No **Google Secret Manager** do projeto GCP (lidos pelo Cloud Run no deploy):
