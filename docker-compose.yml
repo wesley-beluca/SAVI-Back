@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: savi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-savi}
+      POSTGRES_USER: ${POSTGRES_USER:-savi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env (veja .env.example)}
+    ports:
+      - "5432:5432"
+    volumes:
+      - savi-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  savi-postgres-data:

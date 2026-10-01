@@ -1,0 +1,8 @@
+namespace SAVi.Infrastructure.Identity;
+
+public class GoogleOptions
+{
+    public const string SectionName = "Google";
+
+    public string ClientId { get; set; } = string.Empty;
+}
