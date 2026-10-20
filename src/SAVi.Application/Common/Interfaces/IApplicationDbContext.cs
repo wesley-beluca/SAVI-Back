@@ -9,6 +9,8 @@ public interface IApplicationDbContext
 
     DbSet<Transacao> Transacoes { get; }
 
+    DbSet<PagamentoTransacao> PagamentosTransacoes { get; }
+
     DbSet<Orcamento> Orcamentos { get; }
 
     DbSet<Conta> Contas { get; }

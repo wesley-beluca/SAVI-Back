@@ -19,6 +19,8 @@ public class TestApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Transacao> Transacoes => Set<Transacao>();
 
+    public DbSet<PagamentoTransacao> PagamentosTransacoes => Set<PagamentoTransacao>();
+
     public DbSet<Orcamento> Orcamentos => Set<Orcamento>();
 
     public DbSet<Conta> Contas => Set<Conta>();

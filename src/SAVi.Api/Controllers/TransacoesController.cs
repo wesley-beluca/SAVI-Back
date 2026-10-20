@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SAVi.Application.Transacoes.Commands.AtualizarTransacao;
 using SAVi.Application.Transacoes.Commands.CriarTransacao;
+using SAVi.Application.Transacoes.Commands.DefinirPagamento;
 using SAVi.Application.Transacoes.Commands.RemoverTransacao;
 using SAVi.Application.Transacoes.Common;
+using SAVi.Application.Transacoes.Queries.ListarDespesasPendentes;
 using SAVi.Application.Transacoes.Queries.ListarTransacoes;
 using SAVi.Application.Transacoes.Queries.ObterEvolucaoMensal;
 
@@ -23,6 +25,10 @@ public class TransacoesController(ISender sender) : ControllerBase
     public async Task<ActionResult<IReadOnlyList<PontoEvolucaoMensalDto>>> ObterEvolucaoMensal([FromQuery] int meses = 12)
         => Ok(await sender.Send(new ObterEvolucaoMensalQuery(meses)));
 
+    [HttpGet("pendentes")]
+    public async Task<ActionResult<IReadOnlyList<TransacaoDto>>> ListarPendentes([FromQuery] DateOnly de, [FromQuery] DateOnly ate)
+        => Ok(await sender.Send(new ListarDespesasPendentesQuery(de, ate)));
+
     [HttpPost]
     public async Task<ActionResult<TransacaoDto>> Criar(CriarTransacaoCommand command)
         => Ok(await sender.Send(command));
@@ -37,6 +43,14 @@ public class TransacoesController(ISender sender) : ControllerBase
 
         return Ok(await sender.Send(command));
     }
+
+    [HttpPost("{id:guid}/ocorrencias/{ocorrencia:int}/pagamento")]
+    public async Task<ActionResult<TransacaoDto>> MarcarComoPaga(Guid id, int ocorrencia)
+        => Ok(await sender.Send(new DefinirPagamentoCommand(id, ocorrencia, Pago: true)));
+
+    [HttpDelete("{id:guid}/ocorrencias/{ocorrencia:int}/pagamento")]
+    public async Task<ActionResult<TransacaoDto>> DesmarcarPagamento(Guid id, int ocorrencia)
+        => Ok(await sender.Send(new DefinirPagamentoCommand(id, ocorrencia, Pago: false)));
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Remover(Guid id)
