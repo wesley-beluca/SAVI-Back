@@ -19,6 +19,7 @@ public class ListarTransacoesQueryHandler(IApplicationDbContext context, ICurren
 
         var transacoes = await context.Transacoes
             .Include(t => t.Categoria)
+            .Include(t => t.Pagamentos)
             .Where(t => t.UsuarioId == usuarioId)
             .PossivelmenteEntre(inicio, fim)
             .ToListAsync(cancellationToken);

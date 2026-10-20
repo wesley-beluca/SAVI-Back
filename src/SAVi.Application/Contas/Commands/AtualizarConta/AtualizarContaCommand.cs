@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SAVi.Application.Common.Interfaces;
 using SAVi.Application.Contas.Common;
+using SAVi.Application.Transacoes.Common;
 using SAVi.Domain.Entities;
 using SAVi.Domain.Exceptions;
 
@@ -27,6 +28,8 @@ public class AtualizarContaCommandHandler(IApplicationDbContext context, ICurren
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return ContaDto.DeEntidade(conta);
+        var variacao = await MovimentacaoPorContaCalculator.CalcularAsync(context.Transacoes, currentUser.UsuarioId, cancellationToken);
+
+        return ContaDto.DeEntidade(conta, variacao.GetValueOrDefault(conta.Nome));
     }
 }

@@ -1,6 +1,7 @@
 using MediatR;
 using SAVi.Application.Cartoes.Common;
 using SAVi.Application.Common.Interfaces;
+using SAVi.Application.Transacoes.Common;
 using SAVi.Domain.Entities;
 
 namespace SAVi.Application.Cartoes.Commands.CriarCartao;
@@ -26,6 +27,8 @@ public class CriarCartaoCommandHandler(IApplicationDbContext context, ICurrentUs
         context.Cartoes.Add(cartao);
         await context.SaveChangesAsync(cancellationToken);
 
-        return CartaoDto.DeEntidade(cartao);
+        var variacao = await MovimentacaoPorContaCalculator.CalcularAsync(context.Transacoes, currentUser.UsuarioId, cancellationToken);
+
+        return CartaoDto.DeEntidade(cartao, variacao.GetValueOrDefault(MovimentacaoPorContaCalculator.NomeDoCartao(cartao.Nome)));
     }
 }

@@ -26,6 +26,7 @@ public class AtualizarTransacaoCommandHandler(IApplicationDbContext context, ICu
     public async Task<TransacaoDto> Handle(AtualizarTransacaoCommand request, CancellationToken cancellationToken)
     {
         var transacao = await context.Transacoes
+            .Include(t => t.Pagamentos)
             .SingleOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
         if (transacao is null || transacao.UsuarioId != currentUser.UsuarioId)
@@ -48,6 +49,10 @@ public class AtualizarTransacaoCommandHandler(IApplicationDbContext context, ICu
         transacao.Parcelas = request.Parcelas;
         transacao.MesesRecorrencia = request.Recorrente ? request.MesesRecorrencia : 1;
         transacao.CategoriaId = request.CategoriaId;
+
+        // Reduzir a recorrência ou trocar para receita invalida pagamentos já registrados.
+        context.PagamentosTransacoes.RemoveRange(
+            transacao.Pagamentos.Where(p => !transacao.PodeSerPaga(p.Ocorrencia)).ToList());
 
         await context.SaveChangesAsync(cancellationToken);
 

@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SAVi.Application.Cartoes.Common;
 using SAVi.Application.Common.Interfaces;
+using SAVi.Application.Transacoes.Common;
 
 namespace SAVi.Application.Cartoes.Queries.ListarCartoes;
 
@@ -19,6 +20,10 @@ public class ListarCartoesQueryHandler(IApplicationDbContext context, ICurrentUs
             .OrderBy(c => c.Nome)
             .ToListAsync(cancellationToken);
 
-        return cartoes.Select(CartaoDto.DeEntidade).ToList();
+        var variacao = await MovimentacaoPorContaCalculator.CalcularAsync(context.Transacoes, usuarioId, cancellationToken);
+
+        return cartoes
+            .Select(c => CartaoDto.DeEntidade(c, variacao.GetValueOrDefault(MovimentacaoPorContaCalculator.NomeDoCartao(c.Nome))))
+            .ToList();
     }
 }

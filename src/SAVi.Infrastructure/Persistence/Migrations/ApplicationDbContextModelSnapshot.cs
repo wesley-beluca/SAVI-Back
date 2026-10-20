@@ -420,6 +420,29 @@ namespace SAVi.Infrastructure.Persistence.Migrations
                     b.ToTable("Orcamentos", (string)null);
                 });
 
+            modelBuilder.Entity("SAVi.Domain.Entities.PagamentoTransacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Ocorrencia")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TransacaoId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransacaoId", "Ocorrencia")
+                        .IsUnique();
+
+                    b.ToTable("PagamentosTransacoes", (string)null);
+                });
+
             modelBuilder.Entity("SAVi.Domain.Entities.Transacao", b =>
                 {
                     b.Property<Guid>("Id")
@@ -596,6 +619,15 @@ namespace SAVi.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SAVi.Domain.Entities.PagamentoTransacao", b =>
+                {
+                    b.HasOne("SAVi.Domain.Entities.Transacao", null)
+                        .WithMany("Pagamentos")
+                        .HasForeignKey("TransacaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SAVi.Domain.Entities.Transacao", b =>
                 {
                     b.HasOne("SAVi.Domain.Entities.Categoria", "Categoria")
@@ -610,6 +642,11 @@ namespace SAVi.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SAVi.Domain.Entities.Categoria", b =>
                 {
                     b.Navigation("Transacoes");
+                });
+
+            modelBuilder.Entity("SAVi.Domain.Entities.Transacao", b =>
+                {
+                    b.Navigation("Pagamentos");
                 });
 #pragma warning restore 612, 618
         }

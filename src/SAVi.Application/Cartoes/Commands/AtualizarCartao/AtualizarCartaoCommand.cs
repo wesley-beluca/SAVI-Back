@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SAVi.Application.Cartoes.Common;
 using SAVi.Application.Common.Interfaces;
+using SAVi.Application.Transacoes.Common;
 using SAVi.Domain.Entities;
 using SAVi.Domain.Exceptions;
 
@@ -31,6 +32,8 @@ public class AtualizarCartaoCommandHandler(IApplicationDbContext context, ICurre
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return CartaoDto.DeEntidade(cartao);
+        var variacao = await MovimentacaoPorContaCalculator.CalcularAsync(context.Transacoes, currentUser.UsuarioId, cancellationToken);
+
+        return CartaoDto.DeEntidade(cartao, variacao.GetValueOrDefault(MovimentacaoPorContaCalculator.NomeDoCartao(cartao.Nome)));
     }
 }

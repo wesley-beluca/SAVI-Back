@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SAVi.Application.Common.Interfaces;
 using SAVi.Application.Contas.Common;
+using SAVi.Application.Transacoes.Common;
 
 namespace SAVi.Application.Contas.Queries.ListarContas;
 
@@ -19,6 +20,8 @@ public class ListarContasQueryHandler(IApplicationDbContext context, ICurrentUse
             .OrderBy(c => c.Nome)
             .ToListAsync(cancellationToken);
 
-        return contas.Select(ContaDto.DeEntidade).ToList();
+        var variacao = await MovimentacaoPorContaCalculator.CalcularAsync(context.Transacoes, usuarioId, cancellationToken);
+
+        return contas.Select(c => ContaDto.DeEntidade(c, variacao.GetValueOrDefault(c.Nome))).ToList();
     }
 }
