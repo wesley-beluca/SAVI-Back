@@ -16,7 +16,9 @@ public record CriarTransacaoCommand(
     string Conta,
     int Parcelas,
     int MesesRecorrencia,
-    Guid CategoriaId) : IRequest<TransacaoDto>;
+    Guid CategoriaId,
+    // Marca a primeira ocorrência da despesa como já paga. Ignorado para receitas.
+    bool Pago = false) : IRequest<TransacaoDto>;
 
 public class CriarTransacaoCommandHandler(IApplicationDbContext context, ICurrentUserService currentUser)
     : IRequestHandler<CriarTransacaoCommand, TransacaoDto>
@@ -44,6 +46,11 @@ public class CriarTransacaoCommandHandler(IApplicationDbContext context, ICurren
             CategoriaId = request.CategoriaId,
             UsuarioId = usuarioId
         };
+
+        if (request.Pago && transacao.PodeSerPaga(1))
+        {
+            transacao.Pagamentos.Add(new PagamentoTransacao { TransacaoId = transacao.Id, Ocorrencia = 1 });
+        }
 
         context.Transacoes.Add(transacao);
         await context.SaveChangesAsync(cancellationToken);
